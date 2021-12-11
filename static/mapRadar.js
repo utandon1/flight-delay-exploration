@@ -2,6 +2,8 @@
 
     d3.mapRadar = function () {
 
+      // Map visualization modified from https://bl.ocks.org/sjengle/2e58e83685f6d854aa40c7bc546aeb24
+
       const urls = {
         // source: https://observablehq.com/@mbostock/u-s-airports-voronoi
         // source: https://github.com/topojson/us-atlas

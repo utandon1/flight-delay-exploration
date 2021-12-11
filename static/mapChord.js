@@ -3,14 +3,10 @@ const urls = {
   // source: https://github.com/topojson/us-atlas
   map: "https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json",
 
-  // source: https://gist.github.com/mbostock/7608400
   airports:
-    //"https://gist.githubusercontent.com/mbostock/7608400/raw/e5974d9bba45bc9ab272d98dd7427567aafd55bc/airports.csv",
     "https://gist.githubusercontent.com/utandon1/739481f8561aef91504b7834214d856b/raw/67b3f77de71f840addb898684aeb0beaa1041f9f/airport.csv",
 
-  // source: https://gist.github.com/mbostock/7608400
   flights:
-    //"https://gist.githubusercontent.com/mbostock/7608400/raw/e5974d9bba45bc9ab272d98dd7427567aafd55bc/flights.csv"
     "https://gist.githubusercontent.com/utandon1/b9c0fbf443c16e120c59dff657b4dc72/raw/51d576166eecb7ff3eabe9692206e5cecf335943/flight_new.csv"
 };
 
