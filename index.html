@@ -1,0 +1,312 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<html>
+  <head>
+    <!--<script src="https://d3js.org/d3.v7.min.js"></script>-->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://unpkg.com/d3-delaunay@4"></script>
+    <script src="https://unpkg.com/d3-geo-voronoi@1"></script>
+
+    <link rel="stylesheet" href="styles/styles.css">
+    
+  </head>
+  <body onload="loadVisualizations()">
+    <center><img id="head" src="static/seal-dark-red.png"></center>
+    <div id="line"></div>
+
+    <div class="maincontent">
+
+      <center><p id="class">Stanford CS 448B Fall 2021</p></center>
+      
+      <center><p id="title">Flight Delays Across The Nation</p></center>
+
+      <center><div style="display:flex; justify-content: center; align-items:center;"><p style="font-family: Helvetica; font-weight: 600; font-size:14px;">By Utkarsh Tandon</a></p> <p style="margin-left: 10px;font-size:13px; font-weight:100;">December 10, 2021</p></div></center>
+
+
+       <p class="pagetext">Flight delays and cancellations can be a huge pain to deal with. Whether you are traveling coast to coast or taking a quick in-state journey, a flight delay can end up sending all your plans for a spin.
+       </p>
+
+       <p class="pagetext">
+        By understanding where and when delays are worst, why they happen, and which airlines are the worst offenders, you can plan ahead to minimize your chance of getting hit with an unwelcome delay. This explainer analyzes <a style="color:#990f3d" href="https://www.kaggle.com/usdot/flight-delays">data</a> from millions of flights throughout 2015 to do just that — making sure that you fly in the most optimized way possible.
+       </p>
+
+       <p class="pagetext">
+         <i>Disclaimer: Flights from the month of October were removed from our dataset due to incorrect airport codes. </i>
+       </p>
+
+       <div id="line"></div>
+
+       <p class="pagetext"> To begin, we will start by exploring where delays are most prevalent across the nation. The best way to do this is to understand how each airport is connected to each other, capture their flight path, and see how many delays occur along those flight paths. 
+       </p>
+
+       <p class="pagetext">
+        We can visualize airport connections in two ways, one is with a chord diagram linking airports together by chords with varying widths to represent the number of delays going outbound from each airport. The width of each airport arc therefore represents how many delays in total the airport causes. Using these chords we can then put these connections on a geographical map to help us better understand why delays are more prevalent along those routes and from those airports. Our geographical map uses a color heatmap to encode the raw count of numbers of total delays along a given flight connection. Explore the visualization below and read our main takeways that we got from plotting this data. 
+       </p>
+
+       <h2>Where do flight delays happen the most?</h2>
+       <h4 style="color:grey;margin-top: -10px;font-weight: 350;">Hover over chord arcs or airports on the map to view outbound flight paths colorized by number of times delayed.</h4>
+
+       
+    </div>
+
+
+
+    <center>
+
+      <!-- must be 960x600 to match topojson us atlas files -->
+      
+      <div class="container">
+
+
+        <div id="chordDiv">
+
+
+        </div>
+
+
+        <svg id="svg1" width="960" height="600">
+          <g id="basemap"></g>
+          <g id="flights"></g>
+          <g id="airports"></g>
+          <g id="voronoi"></g>
+          <text id="tooltip" style="display: none;"></text>
+        </svg>
+        
+
+      </div>
+
+    
+    </center>
+
+    <div class="maincontent">
+
+        </br>
+
+        <div class="takeaways">
+          <strong>Main Takeaways:</strong>
+
+          <ul>
+            <li>
+              The top seven most delayed airports are ORD, ATL, LAX, DEN, PHX, SFO, and LAS.  
+            </li>
+            <li>
+              An airport with many outbound connections will tend to have a high number of total flight delays as well. This is probably because the airport services more flights in total because they have many connections. 
+            </li>
+            <li>
+              Flight paths closer to an airport will often have higher total delays than paths further away. This is probably because there are more flights between airports that are closer by. 
+            </li>
+          </ul>
+
+
+        </div>
+
+        </br>
+
+        <div class="pagetext">
+          Long story short, we now know which airports have the most delays, but this could be because they service more flights than others rather than some inherent flaw in the way the airport functions. Which is why in the next section — where we explore when flight delays are most frequent — we will normalize by total flights serviced and identify if some of these busy airports actually have consistently low delay frequencies. 
+        </div>
+
+      </br>
+
+      <div id="line"></div>
+
+       <p class="pagetext">
+        We will now attempt to find out exactly when flight delays are most frequent. We can do this by measuring how often flights are delayed each month and plot a lollipop graph. It is also useful to know which airports have the highest delay frequencies during each of those months as to pick out consistently delayed airports that one should try to avoid.  
+       </p>
+
+
+       <h2>When are flight delays the most frequent?</h2>
+       <h4 style="color:grey;margin-top: -10px;font-weight: 350;">Select a month on the left to view most frequently delayed airports during that month on the right. 
+       </h4>
+      
+      
+    </div>
+
+
+    <center>
+
+        <div class="container">
+          <div id="lollipop1">
+
+          </div>
+
+          <div id="lollipop2">
+
+          </div>
+
+        </div>
+
+
+    </center>
+
+
+    <div class="maincontent">
+
+       <p class="pagetext">As pointed out in the tooltips, June seems to be the worst month to travel with the highest chance of getting delayed. Also, if you're ever flying to Dallas, make sure you avoid Dallas Love Field and choose Dallas/Forth Worth instead. Finally, looks like even though Atlanta International is incredibly busy as seen in our previous visualization, they consistenly have very low frequencies of delays — meaning that they are efficient. 
+       </p>
+
+       <p class="pagetext">Next, let's figure out why these delays and cancellations happen in the first place. Do they happen due to logistical inefficiencies or are they mostly due to external factors like bad weather?
+       </p>
+
+       <div id="line"></div>
+
+       <p class="pagetext">In order to get to the bottom of why delays and cancellations occur, we need to temporally explore our data to see how reasons change over time. This is because external factors like weather could be a problem only during certain months. 
+       </p>
+
+       <p class="pagetext">In our visualization below we choose to only explore why cancellations occur (we explain why below). In the visualization we have a slider to change the month, a map with flight connections colorized by the most common reason for cancellation that month (Weather - Blue, Airline - Red, and National Air System - Green), and a radar plot comparing reason distribution during the month. Play around with the visualization — we have our main takeways at the bottom.
+       </p>
+
+
+       <h2>Why do flight delays and cancellations happen?</h2>
+       <h4 style="color:grey;margin-top: -10px;font-weight: 350;">Move the slider to explore cancellations over time. Hover over airports and radar dots to isolate flights and reasons respectively.</h4>
+      
+      
+    </div>
+
+
+    <center>
+
+
+      <div id="restrict">
+      <input type="range" class="slider" min="0" max="10" value="0">
+      <div class="sliderticks">
+        <p>Jan</p>
+        <p>Feb</p>
+        <p>Mar</p>
+        <p>Apr</p>
+        <p>May</p>
+        <p>Jun</p>
+        <p>Jul</p>
+        <p>Aug</p>
+        <p>Sep</p>
+        <p>Nov</p>
+        <p>Dec</p>
+      </div>
+      </div>
+
+
+      <div class="container">
+        <svg id="svg2" width="960" height="600">
+          <g id="basemap2"></g>
+          <g id="flights2"></g>
+          <g id="airports2"></g>
+          <g id="voronoi2"></g>
+          <text id="tooltip2" style="display: none;"></text>
+        </svg>
+        
+
+        <div class="radarChart">
+
+
+        </div>
+
+      </div>
+      
+      
+    </center>
+
+
+    <div class="maincontent">
+
+    </br>
+
+     <div class="takeaways">
+        <strong>Main Takeaways:</strong>
+
+        <ul>
+          <li>
+            Weather is the dominant reason for flight cancellation in the winter months, while Airline dominates the summer.  
+          </li>
+          <li>
+            Geographically, flights going to/coming from Midwest or New England airports will be more likely to be cancelled by weather reasons (during winter months) than flights elsewhere. <u>Hover over Phoenix International during January</u> as one example.
+          </li>
+          <li>
+            Reasons for cancellation vary significantly more over time than reasons for delays (see why below).
+          </li>
+        </ul>
+
+
+      </div>
+
+       <p class="pagetext">We now know that weather plays a huge role in cancellations during the cold months while Airline ineffeciencies take over during frequent summer travel. We can also geographically see trends on which flight paths are most affected by weather so you can plan ahead. One additional interesting observation that we made is that when the weather is bad, flights are most likely to be cancelled than to be delayed. The overlayed bar chart below highlights this trend.
+       </p>
+
+    </div>
+
+
+    <center>
+
+      <div class="overlayBar"></div>
+
+    </center>
+
+    <div class="maincontent">
+
+
+        <p class="pagetext">You can see a clear seasonality (dip during summer months) in how often flights are cancelled due to weather reasons compared to when they are delayed. We found delay reasons in general to be heavily Airline logistic skewed and was unchanging over the months.
+       </p>
+
+       <p class="pagetext">Given that airlines play a major role in causing delays it's incredibly important that we find out which airlines do the best job and which are the worst offenders so that you can avoid them in the future.
+       </p>
+
+       <div id="line"></div>
+
+       <p class="pagetext">Our final interactive visualization finds out which airline is the best to fly if you don't want to get delayed. Airlines are sorted by delay frequency and sized up in a circle depending on how many flights they service in total — this helps us identify which airline is most efficient while still providing a lot of flights that you can choose from.
+       </p>
+
+       <h2>Which airline is delayed least frequently?</h2>
+       <h4 style="color:grey;margin-top: -10px;font-weight: 350;">Circles are sized by number of flights serviced by the airline. Hover over each circle for flight counts and airline names.</h4>
+      
+      
+    </div>
+      
+
+
+
+    
+
+    <center>
+      <div class="bubbleChart">
+
+      </div>
+        
+    </center>
+
+
+
+    <div class="maincontent">
+
+
+      <p class="pagetext">We can clearly see that Delta Airlines is a step ahead of the rest, with an incredibly low delay frequency and still providing a lot of flights for their customers. You most definitely want to avoid Spirit Airlines and Frontier Airlines if you don't want to get delayed (their bad rap is most certainly justified by this visualization). 
+       </p>
+
+
+      <p class="pagetext">That's all we've got. I hope that this explainer gave you the important takeways for where, when, and which airlines you should fly if you want to avoid getting delayed or cancelled during your aerial adventures. Safe travels! ∎
+       </p>
+
+
+
+      <p class="pagetext"> <i>Special thanks to: </i> Prof. Maneesh Agrawala, Dae Hyun Kim, and Shana E. Hadi </p>
+    </div>
+
+    <div id="line"></div>
+
+    <script src="static/mapRadar.js"></script>
+    <script src="static/mapChord.js"></script>
+    <script src="static/lollipop.js"></script>
+    <script src="static/bubble.js"></script>
+    <script src="static/overlayBar.js"></script>
+    <script src="static/main.js"></script>
+    
+    <!--<script src="static/chord.js"></script>-->
+
+
+  </body>
+
+
+
+</html>
+
